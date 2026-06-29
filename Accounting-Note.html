@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASE20095: Computerised Accounting Study Notebook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Macaron Palette */
+            --pastel-pink: #FFD1DC;
+            --pastel-mint: #B0EACD;
+            --pastel-blue: #AEC6CF;
+            --pastel-lavender: #C3B1E1;
+            --pastel-yellow: #FDFD96;
+            
+            --ink: #111111;
+            --ink-muted: #333333;
+            
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            --radius-lg: 32px;
+            --radius-md: 16px;
+            
+            --spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-lavender), var(--pastel-blue), var(--pastel-mint));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Auras */
+        body::before {
+            content: ''; position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--pastel-yellow) 0%, transparent 70%);
+            filter: blur(80px); opacity: 0.6; z-index: -1;
+            animation: floatAura 20s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: ''; position: fixed; bottom: -10%; right: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, var(--pastel-pink) 0%, transparent 70%);
+            filter: blur(100px); opacity: 0.5; z-index: -1;
+            animation: floatAura 25s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatAura {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 100px) scale(1.2); }
+        }
+
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; color: var(--ink); }
+        
+        .header { text-align: center; padding: 40px 20px 20px; position: relative; }
+        .header h1 { font-size: 2.5rem; margin-top: 20px; font-weight: 800; color: var(--ink); }
+        .nav-link { color: var(--ink-muted); text-decoration: none; font-weight: 700; display: inline-block; transition: all 0.4s var(--spring); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--glass-bg); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .nav-link:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); }
+        
+        .lang-btn {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            z-index: 10;
+        }
+
+        .container { max-width: 1100px; margin: 20px auto 60px; padding: 0 20px; position: relative; z-index: 1; }
+        
+        /* Tabs Container */
+        .tabs-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .tab-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--ink-muted);
+            transition: all 0.4s var(--spring);
+            white-space: nowrap;
+        }
+        
+        .tab-btn.active, .tab-btn:hover {
+            background: linear-gradient(135deg, var(--pastel-lavender), var(--pastel-pink));
+            color: var(--ink);
+            border-color: rgba(255,255,255,0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .card { 
+            background: var(--glass-bg); 
+            border-radius: var(--radius-lg); 
+            padding: 40px; 
+            box-shadow: var(--glass-shadow); 
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            transition: all 0.5s var(--spring);
+        }
+        .card h2 { border-bottom: 2px solid rgba(255,255,255,0.5); padding-bottom: 15px; margin-top: 0; font-size: 1.8rem;}
+        
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .step { background: rgba(255,255,255,0.3); padding: 20px; margin-bottom: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); }
+        .step h3 { margin-top: 0; font-size: 1.3rem; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 8px; }
+        
+        .code-box { background: rgba(0,0,0,0.85); color: #F8F9FA; padding: 20px; border-radius: var(--radius-md); font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.6; border: 1px solid rgba(255,255,255,0.2); white-space: pre-wrap; margin-top: 10px; overflow-x: auto; }
+        
+        /* Table styles */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 1.1rem; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.4); text-align: left; }
+        th { font-family: 'Orbitron', sans-serif; font-weight: 700; background: rgba(255,255,255,0.3); }
+        tr:hover { background: rgba(255,255,255,0.1); }
+
+        .btn { 
+            background: linear-gradient(135deg, var(--pastel-lavender), var(--pastel-pink));
+            color: var(--ink); 
+            padding: 12px 28px; 
+            border: 2px solid rgba(255,255,255,0.8); 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            transition: all 0.4s var(--spring);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .btn:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(195, 177, 225, 0.4); background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-lavender)); }
+
+        /* Game Interactive Board */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .game-slot {
+            background: rgba(255,255,255,0.2);
+            border: 2px dashed rgba(255,255,255,0.7);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s var(--spring);
+        }
+        .game-slot.drag-over {
+            background: var(--pastel-mint);
+            border-color: #2E8B57;
+        }
+        .game-card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: grab;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s var(--spring);
+        }
+        .game-card:active {
+            cursor: grabbing;
+        }
+
+        /* Translation CSS Rules */
+        .lang-cn { display: none !important; }
+        body.cn-active .lang-en { display: none !important; }
+        body.cn-active .lang-cn { display: block !important; }
+        
+        span.lang-cn { display: none !important; }
+        body.cn-active span.lang-en { display: none !important; }
+        body.cn-active span.lang-cn { display: inline !important; }
+
+        @media (max-width: 768px) {
+            .lang-btn {
+                position: static;
+                margin-top: 15px;
+            }
+            .tabs-header {
+                flex-wrap: nowrap;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            .game-board {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="nav-link">
+            <span class="lang-en">← Back to Dashboard</span>
+            <span class="lang-cn">← 返回主面板</span>
+        </a>
+        <h1>
+            <span class="lang-en">ASE20095: Study Notebook</span>
+            <span class="lang-cn">ASE20095：综合实操笔记本</span>
+        </h1>
+        <p>
+            <span class="lang-en">Bilingual Review Hub (SQL/Million Accounting, Malaysia SST & AI Prompts)</span>
+            <span class="lang-cn">双语学习笔记（SQL/Million 会计软件、马来西亚 SST 与 AI 提示词）</span>
+        </p>
+        <button class="btn lang-btn" onclick="toggleLanguage()">🌐 EN / 中文</button>
+    </div>
+
+    <div class="container">
+        <!-- Tabs Header -->
+        <div class="tabs-header">
+            <button class="tab-btn active" onclick="switchTab('tab-curriculum')">
+                <span class="lang-en">14-Week Curriculum</span>
+                <span class="lang-cn">14周课程大纲</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-tax')">
+                <span class="lang-en">Malaysia SST Cheat Sheet</span>
+                <span class="lang-cn">马来西亚 SST 税务速查</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-practical')">
+                <span class="lang-en">SQL & Million Guides</span>
+                <span class="lang-cn">SQL 与 Million 软件指南</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-ai')">
+                <span class="lang-en">AI Prompt Playbooks</span>
+                <span class="lang-cn">AI 会计提示词实践</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-game')">
+                <span class="lang-en">Interactive Ledger Game</span>
+                <span class="lang-cn">互动账目过账游戏</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: 14-WEEK CURRICULUM -->
+        <div id="tab-curriculum" class="tab-content active card">
+            <h2>
+                <span class="lang-en">Curriculum Roadmap & Chapter Table</span>
+                <span class="lang-cn">课程路线图与章节大纲</span>
+            </h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">
+                            <span class="lang-en">Week</span>
+                            <span class="lang-cn">周次</span>
+                        </th>
+                        <th style="width: 30%;">
+                            <span class="lang-en">Topic</span>
+                            <span class="lang-cn">课程主题</span>
+                        </th>
+                        <th style="width: 40%;">
+                            <span class="lang-en">Key Concepts</span>
+                            <span class="lang-cn">核心要点</span>
+                        </th>
+                        <th style="width: 20%;">
+                            <span class="lang-en">Tax/Software Focus</span>
+                            <span class="lang-cn">税务与软件实操</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>WK1</b></td>
+                        <td>
+                            <span class="lang-en">AIS Intro & Database Init</span>
+                            <span class="lang-cn">AIS 概述与数据库初始化</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Data processing cycles, security setups, and user privileges.</span>
+                            <span class="lang-cn">数据处理循环、数据库安全和用户角色配置。</span>
+                        </td>
+                        <td><span class="lang-en">SQL: Firebird DB, Million: INI configuration</span><span class="lang-cn">SQL: Firebird 库，Million: INI 配置</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK2</b></td>
+                        <td>
+                            <span class="lang-en">Chart of Accounts & Data Restore</span>
+                            <span class="lang-cn">会计科目表与数据还原</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Database backups (.FDB/ZIP), restoring databases, and COA grouping.</span>
+                            <span class="lang-cn">数据库备份（.FDB/ZIP）、数据恢复导入及 COA 分组规则。</span>
+                        </td>
+                        <td><span class="lang-en">File -> Restore, Account Ranges (1xxx-6xxx)</span><span class="lang-cn">科目代码范围 (1xxx-6xxx) 规划</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK3</b></td>
+                        <td>
+                            <span class="lang-en">Sales/Purchase Ledgers & SST</span>
+                            <span class="lang-cn">销售/采购明细账与 SST</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Credit transactions entry, debtor/creditor invoices, Malaysia SST coding.</span>
+                            <span class="lang-cn">信贷收支录入、客户/供应商发票、马来西亚 SST 税码映射。</span>
+                        </td>
+                        <td><span class="lang-en">Tax codes: SR (8%), TX (Input tax), OS (Out of scope)</span><span class="lang-cn">税码：SR (8%), TX (进项税), OS (除外)</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK4</b></td>
+                        <td>
+                            <span class="lang-en">General Journal & Salary Accruals</span>
+                            <span class="lang-cn">日记账与工资计提</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">General journal vouchers, payroll accruals, EPF (11%/13%), and PCB tax liabilities.</span>
+                            <span class="lang-cn">普通日记账凭单、工资薪金计提、EPF 养老金与 PCB 预扣税。</span>
+                        </td>
+                        <td><span class="lang-en">Double-entry balancing check (Debit = Credit)</span><span class="lang-cn">复式记账平衡校验 (借 = 贷)</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK5</b></td>
+                        <td>
+                            <span class="lang-en">Error Correction & Audit Trails</span>
+                            <span class="lang-cn">记账错误更正与审计跟踪</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Omissions, commission, principle errors; reversal adjustments, Audit Trail logs.</span>
+                            <span class="lang-cn">遗漏/偏差/原则错误；红字冲销调整，系统审计跟踪日志。</span>
+                        </td>
+                        <td><span class="lang-en">Reversal and Adjusting journal vouchers</span><span class="lang-cn">冲销与调整日记账凭单</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK6</b></td>
+                        <td>
+                            <span class="lang-en">Procurement Cycles & Stock Sync</span>
+                            <span class="lang-cn">采购流与库存实时同步</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Purchase orders (PO), Goods Received Notes (GRN), invoice matching, stock updates.</span>
+                            <span class="lang-cn">采购订单 (PO)、入库单 (GRN)、发票核对及库存数量扣减。</span>
+                        </td>
+                        <td><span class="lang-en">Auto-COGS debiting on DO issue</span><span class="lang-cn">送货时自动借记销货成本 (COGS)</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK7</b></td>
+                        <td>
+                            <span class="lang-en">Debtor/Creditor Aging Reports</span>
+                            <span class="lang-cn">客户与供应商账龄分析</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Aging buckets (30/60/90 days), credit term checks, credit limit blocks.</span>
+                            <span class="lang-cn">账龄区间划分、信贷期限查验及额度超限拦截警告。</span>
+                        </td>
+                        <td><span class="lang-en">Debtor Aging lists, Credit limits controls</span><span class="lang-cn">账龄细目、信贷控制设置</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK8</b></td>
+                        <td>
+                            <span class="lang-en">Report Criteria & Filters</span>
+                            <span class="lang-cn">报表参数设定与过滤</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Filtering P&L/Balance Sheets by Project codes and Department divisions.</span>
+                            <span class="lang-cn">按项目代码与部门划分生成过滤性分类账。</span>
+                        </td>
+                        <td><span class="lang-en">SQL Inquiry button, Excel Pivot tables</span><span class="lang-cn">SQL Inquiry 查询，Excel 数据透视表</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK9</b></td>
+                        <td>
+                            <span class="lang-en">Cloud Accounting Architecture</span>
+                            <span class="lang-cn">云端会计系统与安全</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Cloud vs Desktop systems, SSL data encryption, Multi-Factor Authentication.</span>
+                            <span class="lang-cn">云会计与本地桌面端比较、SSL 传输加密、MFA 双因子验证。</span>
+                        </td>
+                        <td><span class="lang-en">QuickBooks Online & Sage Cloud controls</span><span class="lang-cn">云端系统角色权限访问矩阵配置</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK10</b></td>
+                        <td>
+                            <span class="lang-en">AI Automation & OCR Ingestion</span>
+                            <span class="lang-cn">AI 会计自动化与 OCR 识别</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Optical Character Recognition (OCR), automated bank feeds reconciliation rules.</span>
+                            <span class="lang-cn">OCR PDF 发票采集提取，自动银行流水对账匹配规则。</span>
+                        </td>
+                        <td><span class="lang-en">AI Invoice field parsing, bank rules setting</span><span class="lang-cn">发票字段智能解析，银行匹配规则设定</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK11</b></td>
+                        <td>
+                            <span class="lang-en">E-Commerce Sync & Integrations</span>
+                            <span class="lang-cn">电商平台与支付接口同步</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Connecting Shopify/WooCommerce, payment gateway fee (Stripe) ledger mappings.</span>
+                            <span class="lang-cn">网店订单同步，Stripe 等网关手续费扣除的会计分录生成。</span>
+                        </td>
+                        <td><span class="lang-en">Shopify API keys sync, Stripe fee (2%) expense debiting</span><span class="lang-cn">Shopify 同步，借记 Stripe 费用 (2%)</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK12</b></td>
+                        <td>
+                            <span class="lang-en">AI Analytics & Cash Forecasting</span>
+                            <span class="lang-cn">AI 看板与滚动现金预测</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Financial dashboard KPIs, Quick Ratios, rolling cash forecasts models.</span>
+                            <span class="lang-cn">数据看板 KPI 指标、速动比率分析与滚动资金预测模型。</span>
+                        </td>
+                        <td><span class="lang-en">Quick Ratio = Liquid Assets / Current Liabilities</span><span class="lang-cn">速动比率计算与流动资金健康预测</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK13</b></td>
+                        <td>
+                            <span class="lang-en">Data Governance & compliance</span>
+                            <span class="lang-cn">数据治理合规与安全审计</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Audit trail database locks, GDPR requirements, back-dated entry preventions.</span>
+                            <span class="lang-cn">会计账期锁定、GDPR 安全治理规程、系统修改日志核查。</span>
+                        </td>
+                        <td><span class="lang-en">Posting lock settings, audit logs review</span><span class="lang-cn">账期锁定、审计修改日志查询</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>WK14</b></td>
+                        <td>
+                            <span class="lang-en">Year-End Closing Operations</span>
+                            <span class="lang-cn">财务年终结账与结转</span>
+                        </td>
+                        <td>
+                            <span class="lang-en">Resetting temporary accounts to zero, transferring net profits to Retained Earnings.</span>
+                            <span class="lang-cn">重置临时损益账户为零，将年度净利润结转至留存收益。</span>
+                        </td>
+                        <td><span class="lang-en">SQL: Tools -> Year End, Million: File -> Year End</span><span class="lang-cn">SQL: Tools -> Year End, Million: File -> Year End</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TAB 2: MALAYSIA SST CHEAT SHEET -->
+        <div id="tab-tax" class="tab-content card">
+            <h2>
+                <span class="lang-en">Malaysia SST (Sales & Service Tax) & Tax Tariffs</span>
+                <span class="lang-cn">马来西亚 SST 销售与服务税与税率速查</span>
+            </h2>
+            <div class="step">
+                <h3>
+                    <span class="lang-en">1. Malaysia SST Tariffs Breakdown (2026 Rules)</span>
+                    <span class="lang-cn">1. 马来西亚 SST 各种税率细目（2026年最新规则）</span>
+                </h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SST Category</th>
+                            <th>Tariff Rate</th>
+                            <th>Applicable Sectors & Goods</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Service Tax (Standard)</b></td>
+                            <td>8%</td>
+                            <td>Consultancy, IT services, Legal, Management services, Logistics.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Service Tax (Special)</b></td>
+                            <td>6%</td>
+                            <td>Food & beverage outlets (F&B), Telecommunication, Credit card issuances.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Sales Tax (Manufactured)</b></td>
+                            <td>10%</td>
+                            <td>Standard manufactured products and general imported retail goods.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Sales Tax (Reduced)</b></td>
+                            <td>5%</td>
+                            <td>Specific basic food items, construction materials, petroleum products.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="step">
+                <h3>
+                    <span class="lang-en">2. Standard Tax Coding in Computerised Accounting</span>
+                    <span class="lang-cn">2. 计算机化会计系统中的标准税码映射</span>
+                </h3>
+                <ul>
+                    <li><b>SR</b> (Output Tax - Standard Rate): Applied to service invoices issued to debtors (e.g. charging 8% SST).</li>
+                    <li><b>TX</b> (Input Tax - Purchases): Applied to purchase bills received from vendors for business inputs.</li>
+                    <li><b>OS</b> (Out of Scope): Non-taxable transactions (e.g., salaries, capital receipts, government fees).</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h3>
+                    <span class="lang-en">3. SST-02 Return Filing Checklist</span>
+                    <span class="lang-cn">3. SST-02 报税申报清单</span>
+                </h3>
+                <p>Accounting systems generate tax summary files automatically. Reconcile this list before submitting to Royal Malaysian Customs Department (JKDM):</p>
+                <ol>
+                    <li>Verify all Sales Invoices are posted and tagged with the correct tax codes (SR/OS).</li>
+                    <li>Cross-reference the **Tax Agency Payable Account** with the SST Output Tax Summary report.</li>
+                    <li>Identify any cash discount or adjustment credit notes issued to debtors and deduct accordingly.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- TAB 3: SQL & MILLION PRACTICAL GUIDES -->
+        <div id="tab-practical" class="tab-content card">
+            <h2>
+                <span class="lang-en">SQL Accounting & Million Accounting Software Steps</span>
+                <span class="lang-cn">SQL Accounting 和 Million Accounting 软件操作手册</span>
+            </h2>
+            
+            <div class="step">
+                <h3>SQL Accounting Practical Playbook</h3>
+                <ol>
+                    <li><b>Create Database:</b> File -> Logon -> Click the 'Manage Database' link. Define database server connection, choose Firebird database, and select starting accounting period dates.</li>
+                    <li><b>Restore Backup:</b> File -> Restore -> Select local `.FDB` backup file from hard drive -> Choose destination directory -> Click 'OK'.</li>
+                    <li><b>Salary Journal Accruals:</b> Open GL -> Journal Entry -> Click 'New'. Input date, debit Wages & EPF expenses, credit employee EPF deductions, PCB tax, and Accrued Salaries.</li>
+                    <li><b>Year End Closing:</b> Back up database -> Tools -> Year End Close -> Click 'Run'. Verify retained earnings accounts balance balances.</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Million Accounting Practical Playbook</h3>
+                <ol>
+                    <li><b>Open Local Files:</b> Select local system folder path from directories list -> Configure system connection parameters in `Million.ini`.</li>
+                    <li><b>Restore ZIP Data:</b> File Manager -> Restore ZIP -> Select zip file -> Extract to local database subfolder.</li>
+                    <li><b>Invoicing with Stock updates:</b> Sales -> Invoice -> Insert customer code -> Add item code -> System decrements database stock units automatically and posts sales.</li>
+                    <li><b>Period Closing:</b> File -> Period Lock -> Select lock dates to prevent back-dated edits.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- TAB 4: AI PROMPT PLAYBOOKS -->
+        <div id="tab-ai" class="tab-content card">
+            <h2>
+                <span class="lang-en">🤖 AI Prompt Engineering for Bookkeepers (Step-by-Step)</span>
+                <span class="lang-cn">🤖 智能 AI 会计提示词操作指南（逐步指导）</span>
+            </h2>
+            
+            <div class="step">
+                <h3>
+                    <span class="lang-en">1. Cleaning Database Ledger Duplicates</span>
+                    <span class="lang-cn">1. 清理重复科目分录</span>
+                </h3>
+                <p>Use this prompt when importing external Excel data that has duplicate ledger names:</p>
+                <div class="code-box">Prompt:
+"I have imported a client Chart of Accounts spreadsheet and found duplicated items. Account '6100-Wages' and '6100/010 Salaries & Wages' both contain salary entries. Write a Python script using pandas to find all rows matching either code, sum the amounts, and map them to a consolidated code '6100-Wages'."</div>
+            </div>
+
+            <div class="step">
+                <h3>
+                    <span class="lang-en">2. Auditing Invoice Tax Discrepancies</span>
+                    <span class="lang-cn">2. 审计发票税率金额偏差</span>
+                </h3>
+                <p>Use this prompt to check whether tax calculations match the subtotals:</p>
+                <div class="code-box">Prompt:
+"We received a supplier invoice listing a Subtotal of RM 8,500, a tax code for Malaysia 8% Service Tax, and a Total of RM 9,250. Write a mathematical check prompt to verify if this calculation is correct, calculate the exact expected total, and write the adjusting journal entry if there is a variance."</div>
+            </div>
+
+            <div class="step">
+                <h3>
+                    <span class="lang-en">3. Bank Statement Reconciliation Match rules</span>
+                    <span class="lang-cn">3. 银行对账单自动对账规则设计</span>
+                </h3>
+                <p>Use this prompt to construct matching rules for bank feed transaction imports:</p>
+                <div class="code-box">Prompt:
+"We are designing automated bank rules in our cloud accounting platform. Analyze these bank statement description lines:
+1. 'GIRO PAYMENT - TENAGA NASIONAL'
+2. 'BANK CHARGES - MAYBANK MY'
+3. 'INTEREST SAVINGS'
+Suggest the matching rule criteria, the target expense/revenue accounts, and the tax codes (SR/TX/OS) to apply to each line."</div>
+            </div>
+        </div>
+
+        <!-- TAB 5: INTERACTIVE LEDGER GAME -->
+        <div id="tab-game" class="tab-content card">
+            <h2>
+                <span class="lang-en">Interactive Posting Game</span>
+                <span class="lang-cn">互动记账过账游戏</span>
+            </h2>
+            <p>
+                <span class="lang-en">Drag the accounting card into the correct Ledger Slot to post the transaction:</span>
+                <span class="lang-cn">将下方的账目卡片拖动到正确的分类账槽位中以完成过账：</span>
+            </p>
+            
+            <div style="display:flex; justify-content:space-around; margin: 30px 0;">
+                <div id="card1" class="game-card" draggable="true" ondragstart="drag(event)">Debit: Rent Expense</div>
+                <div id="card2" class="game-card" draggable="true" ondragstart="drag(event)">Credit: Sales Revenue</div>
+                <div id="card3" class="game-card" draggable="true" ondragstart="drag(event)">Debit: Bank Cash</div>
+            </div>
+
+            <div class="game-board">
+                <div class="game-slot" id="slot-revenue" ondragover="allowDrop(event)" ondragleave="leaveSlot(event)" ondrop="drop(event, 'Credit: Sales Revenue')">
+                    <span class="lang-en">Drop Credit Revenue card here</span>
+                    <span class="lang-cn">在此处拖入贷记收入卡片</span>
+                </div>
+                <div class="game-slot" id="slot-asset" ondragover="allowDrop(event)" ondragleave="leaveSlot(event)" ondrop="drop(event, 'Debit: Bank Cash')">
+                    <span class="lang-en">Drop Debit Cash/Asset card here</span>
+                    <span class="lang-cn">在此处拖入借记现金/资产卡片</span>
+                </div>
+                <div class="game-slot" id="slot-expense" ondragover="allowDrop(event)" ondragleave="leaveSlot(event)" ondrop="drop(event, 'Debit: Rent Expense')">
+                    <span class="lang-en">Drop Debit Expense card here</span>
+                    <span class="lang-cn">在此处拖入借记费用卡片</span>
+                </div>
+            </div>
+            <div id="game-res" style="text-align:center; font-size:1.3rem; margin-top:20px; color: #2E8B57; font-weight:700;"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleLanguage() {
+            document.body.classList.toggle('cn-active');
+        }
+
+        function switchTab(tabId) {
+            // Remove active class from all tabs & buttons
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // Add active class to selected tab & button
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Drag and Drop Logic
+        let draggedText = "";
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+            draggedText = ev.target.innerText;
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+
+        function leaveSlot(ev) {
+            ev.currentTarget.classList.remove('drag-over');
+        }
+
+        let correctMatches = 0;
+        function drop(ev, expected) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+            
+            if (draggedText === expected) {
+                const id = ev.dataTransfer.getData("text");
+                const card = document.getElementById(id);
+                ev.currentTarget.innerHTML = "";
+                ev.currentTarget.appendChild(card);
+                card.draggable = false;
+                card.style.background = "#B0EACD";
+                card.style.cursor = "default";
+                correctMatches++;
+                
+                if (correctMatches === 3) {
+                    document.getElementById('game-res').innerText = "Excellent Work! All transactions posted to the correct ledger accounts! 🎉";
+                }
+            } else {
+                alert("Incorrect matching ledger! Please check double-entry rules.");
+            }
+        }
+    </script>
+</body>
+</html>

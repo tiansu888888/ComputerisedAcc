@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 8: Custom Reports Querying & Criteria Filters - ASE20095</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Macaron Palette */
+            --pastel-pink: #FFD1DC;
+            --pastel-mint: #B0EACD;
+            --pastel-blue: #AEC6CF;
+            --pastel-lavender: #C3B1E1;
+            --pastel-yellow: #FDFD96;
+            
+            --ink: #111111;
+            --ink-muted: #333333;
+            
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            --radius-lg: 32px;
+            --radius-md: 16px;
+            
+            --spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-lavender), var(--pastel-blue), var(--pastel-mint));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Auras */
+        body::before {
+            content: ''; position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--pastel-yellow) 0%, transparent 70%);
+            filter: blur(80px); opacity: 0.6; z-index: -1;
+            animation: floatAura 20s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: ''; position: fixed; bottom: -10%; right: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, var(--pastel-pink) 0%, transparent 70%);
+            filter: blur(100px); opacity: 0.5; z-index: -1;
+            animation: floatAura 25s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatAura {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 100px) scale(1.2); }
+        }
+
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; color: var(--ink); }
+        
+        .header { text-align: center; padding: 40px 20px 20px; position: relative; }
+        .header h1 { font-size: 2.5rem; margin-top: 20px; font-weight: 800; color: var(--ink); }
+        .nav-link { color: var(--ink-muted); text-decoration: none; font-weight: 700; display: inline-block; transition: all 0.4s var(--spring); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--glass-bg); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .nav-link:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); }
+        
+        .lang-btn {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            z-index: 10;
+        }
+
+        .container { max-width: 900px; margin: 20px auto 40px; padding: 0 20px; position: relative; z-index: 1; }
+        
+        .card { 
+            background: var(--glass-bg); 
+            border-radius: var(--radius-lg); 
+            padding: 40px; 
+            box-shadow: var(--glass-shadow); 
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            transition: all 0.5s var(--spring);
+        }
+        .card h2 { border-bottom: 2px solid rgba(255,255,255,0.5); padding-bottom: 15px; margin-top: 0; font-size: 1.8rem;}
+        
+        .step { background: rgba(255,255,255,0.3); padding: 20px; margin-bottom: 15px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); }
+        .step h3 { margin-top: 0; font-size: 1.3rem; }
+        
+        .btn { 
+            background: linear-gradient(135deg, var(--pastel-lavender), var(--pastel-pink));
+            color: var(--ink); 
+            padding: 12px 28px; 
+            border: 2px solid rgba(255,255,255,0.8); 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            transition: all 0.4s var(--spring);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .btn:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(195, 177, 225, 0.4); background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-lavender)); }
+        
+        /* Quiz */
+        .quiz-q { margin-bottom: 25px; }
+        .quiz-label { display: block; padding: 12px 16px; cursor: pointer; transition: all 0.4s var(--spring); border-radius: 12px; border: 1px solid transparent; font-weight: 600; font-size: 1.1rem;}
+        .quiz-label:hover { background: rgba(255,255,255,0.4); border: 1px solid var(--glass-border); transform: translateX(5px);}
+        
+        /* Coding & AI prompts */
+        .code-editor { background: rgba(0,0,0,0.8); color: #F8F9FA; padding: 20px; border-radius: var(--radius-md); font-family: 'JetBrains Mono', monospace; line-height: 1.8; margin-top: 10px; font-size: 1rem; border: 1px solid rgba(255,255,255,0.2); box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); white-space: pre-wrap; }
+        .blank-input { border: none; border-bottom: 2px solid var(--pastel-mint); background: transparent; color: var(--ink); font-family: inherit; font-size: 1.1rem; text-align: center; outline: none; transition: all 0.4s var(--spring); font-weight: 700;}
+        .blank-input:focus { border-bottom: 2px solid var(--pastel-lavender); background: rgba(255,255,255,0.1); border-radius: 4px;}
+        .correct-ans { color: #0f5132; font-weight: 700; margin-top: 15px; display: inline-block; padding: 10px 16px; background: rgba(176, 234, 205, 0.6); border-radius: 12px; border: 1px solid var(--pastel-mint);}
+        .wrong-ans { color: #842029; font-weight: 700; margin-top: 15px; display: inline-block; padding: 10px 16px; background: rgba(255, 209, 220, 0.6); border-radius: 12px; border: 1px solid var(--pastel-pink);}
+        
+        /* Tips Section override */
+        .card[style*="border-left"] { border-left: none !important; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(176, 234, 205, 0.3), rgba(255, 255, 255, 0.4)); }
+        .card[style*="border-left"]::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--pastel-mint); box-shadow: 0 0 10px var(--pastel-mint); }
+        .card[style*="border-left"] h2 { border-bottom: none; color: #0f5132; }
+        
+        /* SVG Tweaks for Macaron Glassmorphism & High Contrast */
+        svg { background: transparent !important; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.05)); }
+        svg text { font-family: 'Rajdhani', sans-serif !important; font-weight: 700 !important; fill: #111111 !important; }
+        svg [fill="url(#navyGrad)"] { fill: rgba(255,255,255,0.8) !important; stroke: #111111 !important; stroke-width: 2px; }
+        svg [fill="#FFF"] { fill: rgba(255,255,255,0.8) !important; stroke: #111111 !important; stroke-width: 1px; }
+        svg [stroke="#1E3A8A"] { stroke: #111111 !important; stroke-width: 2px !important; }
+        svg [fill="#1E3A8A"] { fill: #111111 !important; }
+        svg [stroke="#FF6B6B"] { stroke: #D81B60 !important; }
+        svg [fill="#FF6B6B"] { fill: #D81B60 !important; }
+
+        /* Interactive Matching Game Styles */
+        .match-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+        .match-card { background: rgba(255, 255, 255, 0.5); border: 2px dashed rgba(255,255,255,0.8); padding: 20px; border-radius: var(--radius-md); cursor: pointer; text-align: center; font-weight: 700; font-size: 1.15rem; transition: all 0.3s var(--spring); }
+        .match-card:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.7); }
+        .match-card.selected { border-color: var(--pastel-lavender); background: var(--pastel-pink); }
+        .match-card.matched { border-color: var(--pastel-mint); background: var(--pastel-mint); opacity: 0.7; pointer-events: none; }
+
+        /* Translation CSS Rules */
+        .lang-cn { display: none !important; }
+        body.cn-active .lang-en { display: none !important; }
+        body.cn-active .lang-cn { display: block !important; }
+        
+        span.lang-cn { display: none !important; }
+        body.cn-active span.lang-en { display: none !important; }
+        body.cn-active span.lang-cn { display: inline !important; }
+
+        @media (max-width: 768px) {
+            .lang-btn {
+                position: static;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="nav-link">
+            <span class="lang-en">← Back to Hub</span>
+            <span class="lang-cn">← 返回主页</span>
+        </a>
+        <h1>
+            <span class="lang-en">Week 8: Custom Reports Querying & Criteria Filters</span>
+            <span class="lang-cn">第 8 周：自定义财务报表查询与多参数过滤</span>
+        </h1>
+        <button class="btn lang-btn" onclick="toggleLanguage()">🌐 EN / 中文</button>
+    </div>
+
+    <div class="container">
+        <!-- Notes Section -->
+        <div class="card">
+            <h2>
+                <span class="lang-en">Step-by-Step Guide</span>
+                <span class="lang-cn">分步指南</span>
+            </h2>
+            <div class="lang-en">
+                <div class='step'><h3>1. Report Filtering Criteria</h3><p>Corporate audits require customized report views. Systems support filtering the General Ledger and Balance Sheets by **Date Range**, **Department Code** (for business segments), and **Project Code** (for cost centers).</p></div><div class='step'><h3>2. Database Query Logic</h3><p>When filters are applied, the system generates underlying SQL queries containing `WHERE` bounds. This extracts specific records instead of parsing the entire transaction database.</p></div>
+            </div>
+            <div class="lang-cn">
+                <div class='step'><h3>1. 报表过滤与查询条件</h3><p>企业审计需要自定义报表视图。系统支持按**日期范围**、**部门代码**（针对业务板块）和**项目代码**（针对成本中心）来过滤总分类账和资产负债表。</p></div><div class='step'><h3>2. 数据库查询与日志检索</h3><p>当应用过滤器时，系统生成底层的 SQL 查询语句，包含 `WHERE` 限制条件。这可以直接提取特定记录，而无需解析整个交易数据库。</p></div>
+            </div>
+        </div>
+
+        <!-- SVG Animation Section -->
+        <div class="card">
+            <h2>
+                <span class="lang-en">Concept Visualization</span>
+                <span class="lang-cn">概念可视化</span>
+            </h2>
+            <div style="background: rgba(255,255,255,0.5); border-radius: 8px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.8);">
+                <svg width='100%' max-width='600' height='180' viewBox='0 0 600 180'><rect x='50' y='50' width='140' height='80' rx='8' fill='#FFF' stroke='#1E3A8A' stroke-width='2'/><text x='120' y='95' fill='#111111' font-family='Rajdhani' font-size='16' font-weight='bold' text-anchor='middle'>Date: Q1 2026</text><rect x='230' y='50' width='140' height='80' rx='8' fill='#FFF' stroke='#FF6B6B' stroke-width='2'/><text x='300' y='95' fill='#111111' font-family='Rajdhani' font-size='16' font-weight='bold' text-anchor='middle'>Project: Proj-A</text><rect x='410' y='50' width='140' height='80' rx='8' fill='#FFF' stroke='#1E3A8A' stroke-width='2'/><text x='480' y='95' fill='#111111' font-family='Rajdhani' font-size='15' font-weight='bold' text-anchor='middle'>Filtered P&amp;L</text><path d='M 190 90 L 230 90' stroke='#1E3A8A' stroke-width='2' fill='none'/><path d='M 370 90 L 410 90' stroke='#FF6B6B' stroke-width='2' fill='none'/></svg>
+            </div>
+        </div>
+
+        <!-- Explanation Block (Infographic) -->
+        
+    <div class="card">
+        <h2>
+            <span class="lang-en">Educational Infographic</span>
+            <span class="lang-cn">教学信息图</span>
+        </h2>
+        <p>
+            <span class="lang-en">Visual concept map explaining the key module topic:</span>
+            <span class="lang-cn">解释该模块核心主题的视觉概念图：</span>
+        </p>
+        <div style="background: rgba(255,255,255,0.5); border-radius: 8px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.8); margin-top: 15px;">
+            <svg width='100%' max-width='600' height='180' viewBox='0 0 600 180'><rect x='50' y='50' width='140' height='80' rx='8' fill='#FFF' stroke='#1E3A8A' stroke-width='2'/><text x='120' y='95' fill='#111111' font-family='Rajdhani' font-size='16' font-weight='bold' text-anchor='middle'>Date: Q1 2026</text><rect x='230' y='50' width='140' height='80' rx='8' fill='#FFF' stroke='#FF6B6B' stroke-width='2'/><text x='300' y='95' fill='#111111' font-family='Rajdhani' font-size='16' font-weight='bold' text-anchor='middle'>Project: Proj-A</text><rect x='410' y='50' width='140' height='80' rx='8' fill='#FFF' stroke='#1E3A8A' stroke-width='2'/><text x='480' y='95' fill='#111111' font-family='Rajdhani' font-size='15' font-weight='bold' text-anchor='middle'>Filtered P&amp;L</text><path d='M 190 90 L 230 90' stroke='#1E3A8A' stroke-width='2' fill='none'/><path d='M 370 90 L 410 90' stroke='#FF6B6B' stroke-width='2' fill='none'/></svg>
+        </div>
+    </div>
+    
+
+        <!-- AI Integration Playbook -->
+        <div class="card">
+            <h2>
+                <span class="lang-en">🤖 AI Integration Playbook</span>
+                <span class="lang-cn">🤖 AI 实践指南</span>
+            </h2>
+            <div class="lang-en"><h3>AI Prompting for Report Filters:</h3><p><b>Prompt:</b> 'I need a Profit & Loss report only for 'Project-A' in the first quarter of 2026. Write the SQL query to filter the ledger table 'GL' using date ranges and ProjectID.'<br><b>Result:</b> AI writes a query: SELECT Account, SUM(Amount) FROM GL WHERE ProjectID = 'Project-A' AND Date BETWEEN '2026-01-01' AND '2026-03-31' GROUP BY Account.</p></div>
+            <div class="lang-cn"><h3>AI 辅助步骤：</h3><p><b>Prompt 提示词：</b> “我需要一份仅针对 2026 年第一季度 'Project-A' 的损益报告。请编写 SQL 查询，利用日期范围和 ProjectID 来过滤分类账表 'GL'。”<br><b>效果：</b> AI 给出查询：SELECT Account, SUM(Amount) FROM GL WHERE ProjectID = 'Project-A' AND Date BETWEEN '2026-01-01' AND '2026-03-31' GROUP BY Account。</p></div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="card" style="border-left: 5px solid #10B981;">
+            <h2>
+                <span class="lang-en">Tips</span>
+                <span class="lang-cn">提示</span>
+            </h2>
+            <div class="lang-en">When assigning costs, always enter the project code during journal entry. Retroactively editing transaction lists to add project filters is highly time-consuming.</div>
+            <div class="lang-cn">在分配成本时，务必在录入日记账分录时输入项目代码。事后重新编辑交易列表来添加项目代码会耗费大量时间。</div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="card">
+            <h2>
+                <span class="lang-en">Knowledge Check</span>
+                <span class="lang-cn">知识自测</span>
+            </h2>
+            <div id="quiz-container">
+                <div class='quiz-q'>
+            <p><b>1. 
+                <span class="lang-en">Which filter is used to run a Profit & Loss statement for a specific business branch?</span>
+                <span class="lang-cn">要运行特定业务分部的损益表，应该使用哪种过滤器？</span>
+            </b></p>
+            <label class='quiz-label'>
+                <input type='radio' name='q0' value='0'>
+                <span class="lang-en">Project / Department Code Filter</span>
+                <span class="lang-cn">项目 / 部门代码过滤器</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q0' value='1'>
+                <span class="lang-en">Tax Code OS</span>
+                <span class="lang-cn">税码 OS</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q0' value='2'>
+                <span class="lang-en">File Restoration</span>
+                <span class="lang-cn">数据恢复</span>
+            </label>
+        </div><div class='quiz-q'>
+            <p><b>2. 
+                <span class="lang-en">Filtering by Date Range helps auditors by:</span>
+                <span class="lang-cn">按日期范围过滤可以如何帮助审计人员？</span>
+            </b></p>
+            <label class='quiz-label'>
+                <input type='radio' name='q1' value='0'>
+                <span class="lang-en">Deleting duplicate ledger codes</span>
+                <span class="lang-cn">删除重复科目</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q1' value='1'>
+                <span class="lang-en">Isolating transactions belonging to a specific financial quarter or period</span>
+                <span class="lang-cn">隔离属于特定财务季度或账期的交易记录</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q1' value='2'>
+                <span class="lang-en">Making reports render in pink</span>
+                <span class="lang-cn">让报表背景呈现粉红色</span>
+            </label>
+        </div><div class='quiz-q'>
+            <p><b>3. 
+                <span class="lang-en">A project code filter in computerized accounting is primarily used to track:</span>
+                <span class="lang-cn">计算机化会计中的项目代码过滤器主要用于追踪：</span>
+            </b></p>
+            <label class='quiz-label'>
+                <input type='radio' name='q2' value='0'>
+                <span class="lang-en">Individual software licenses</span>
+                <span class="lang-cn">个人软件许可</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q2' value='1'>
+                <span class="lang-en">Costs and revenues of specific contract jobs or projects</span>
+                <span class="lang-cn">特定合同工作或项目的成本与收入</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q2' value='2'>
+                <span class="lang-en">Database passwords</span>
+                <span class="lang-cn">数据库密码</span>
+            </label>
+        </div><div class='quiz-q'>
+            <p><b>4. 
+                <span class="lang-en">To search for specific transactions in SQL Accounting database, the software issues a:</span>
+                <span class="lang-cn">要在 SQL Accounting 数据库中搜索特定的交易记录，软件会发出：</span>
+            </b></p>
+            <label class='quiz-label'>
+                <input type='radio' name='q3' value='0'>
+                <span class="lang-en">SQL SELECT query</span>
+                <span class="lang-cn">SQL SELECT 查询</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q3' value='1'>
+                <span class="lang-en">System reboot command</span>
+                <span class="lang-cn">系统重启命令</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q3' value='2'>
+                <span class="lang-en">HTML script tag</span>
+                <span class="lang-cn">HTML script 标签</span>
+            </label>
+        </div><div class='quiz-q'>
+            <p><b>5. 
+                <span class="lang-en">Which report displays the assets, liabilities, and equity of a business at a specific date?</span>
+                <span class="lang-cn">哪种财务报表显示了企业在特定日期的资产、负债和所有者权益？</span>
+            </b></p>
+            <label class='quiz-label'>
+                <input type='radio' name='q4' value='0'>
+                <span class="lang-en">Trial Balance</span>
+                <span class="lang-cn">试算平衡表</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q4' value='1'>
+                <span class="lang-en">Balance Sheet (Statement of Financial Position)</span>
+                <span class="lang-cn">资产负债表 (Balance Sheet)</span>
+            </label><label class='quiz-label'>
+                <input type='radio' name='q4' value='2'>
+                <span class="lang-en">Journal Listing</span>
+                <span class="lang-cn">日记账列表</span>
+            </label>
+        </div>
+                <button class="btn" onclick="checkQuiz()">
+                    <span class="lang-en">Submit Answers</span>
+                    <span class="lang-cn">提交答案</span>
+                </button>
+                <div id="quiz-result"></div>
+            </div>
+        </div>
+
+        <!-- Fill in the Blanks -->
+        <div class="card">
+            <h2>
+                <span class="lang-en">Fill in the Blanks</span>
+                <span class="lang-cn">填空练习</span>
+            </h2>
+            <p>
+            <span class="lang-en">To analyze performance of a branch, we filter the General Ledger by <input type='text' id='blank0' class='blank-input' style='width:100px;'> code.</span>
+            <span class="lang-cn">为了分析分部的业绩，我们按 <input type='text' id='blank_cn0' class='blank-input' style='width:100px;'> 代码来过滤总账记录。</span>
+        </p><p>
+            <span class="lang-en">Database tables filters generate underlying SQL queries using the keyword <input type='text' id='blank1' class='blank-input' style='width:100px;'>.</span>
+            <span class="lang-cn">数据库表过滤器在底层生成 SQL 查询时会使用关键字 <input type='text' id='blank_cn1' class='blank-input' style='width:100px;'> 来限制条件。</span>
+        </p>
+            <button class="btn" onclick="checkBlanks()">
+                <span class="lang-en">Check Answers</span>
+                <span class="lang-cn">检查答案</span>
+            </button>
+            <div id="blanks-result"></div>
+        </div>
+
+        <!-- Coding Activities -->
+        <div class="card">
+            <h2>
+                <span class="lang-en">Practical Exercise</span>
+                <span class="lang-cn">实践练习</span>
+            </h2>
+            <div class='step'>
+            <p><b>
+                <span class="lang-en">Task 1: Write a SQL query to list all records from 'Journal' where Department is 'Sales'.</span>
+                <span class="lang-cn">任务 1: SQL 查询：列出 'Journal' 表中所有 Department 为 'Sales' 的记录。</span>
+            </b></p>
+            <button class="btn" onclick="showCodeAns('w8c0')">
+                <span class="lang-en">Show Answer</span>
+                <span class="lang-cn">显示答案</span>
+            </button>
+            <div class='code-editor' id='code-ans-w8c0' style='display:none;'>SELECT * FROM Journal WHERE Department = 'Sales';</div>
+        </div><div class='step'>
+            <p><b>
+                <span class="lang-en">Task 2: In SQL Accounting, which button is clicked after selecting filter criteria to refresh report?</span>
+                <span class="lang-cn">任务 2: 在 SQL Accounting 中，选择过滤条件后点击哪个按钮来刷新报表？</span>
+            </b></p>
+            <button class="btn" onclick="showCodeAns('w8c1')">
+                <span class="lang-en">Show Answer</span>
+                <span class="lang-cn">显示答案</span>
+            </button>
+            <div class='code-editor' id='code-ans-w8c1' style='display:none;'>Inquiry</div>
+        </div><div class='step'>
+            <p><b>
+                <span class="lang-en">Task 3: Excel formula to sum column D if project in column C is 'Proj1'.</span>
+                <span class="lang-cn">任务 3: Excel 公式：如果 C 列的项目为 'Proj1'，则对 D 列对应的数值求和。</span>
+            </b></p>
+            <button class="btn" onclick="showCodeAns('w8c2')">
+                <span class="lang-en">Show Answer</span>
+                <span class="lang-cn">显示答案</span>
+            </button>
+            <div class='code-editor' id='code-ans-w8c2' style='display:none;'>=SUMIF(C:C, "Proj1", D:D)</div>
+        </div>
+        </div>
+
+        <!-- Matching Game -->
+        <div class="card">
+            <h2>
+                <span class="lang-en">Matching Game</span>
+                <span class="lang-cn">配对游戏</span>
+            </h2>
+            <p>
+                <span class="lang-en">Match the term on the left with its definition on the right.</span>
+                <span class="lang-cn">将左侧的术语与右侧的定义进行配对。</span>
+            </p>
+            <div class="match-grid">
+                <div class="match-card" data-id="1" onclick="selectMatchCard(this)">Department Filter</div><div class="match-card" data-target="4" onclick="selectMatchCard(this)">
+            <span class="lang-en">Isolates period transaction balances</span>
+            <span class="lang-cn">隔离特定账期内的交易余额</span>
+        </div><div class="match-card" data-id="3" onclick="selectMatchCard(this)">Inquiry Button</div><div class="match-card" data-target="3" onclick="selectMatchCard(this)">
+            <span class="lang-en">Executes search query refresh in SQL software</span>
+            <span class="lang-cn">在 SQL 软件中执行搜索查询刷新</span>
+        </div><div class="match-card" data-id="4" onclick="selectMatchCard(this)">Date Range</div><div class="match-card" data-target="1" onclick="selectMatchCard(this)">
+            <span class="lang-en">Filters ledger by business segments</span>
+            <span class="lang-cn">按业务分部对分类账进行过滤</span>
+        </div><div class="match-card" data-id="2" onclick="selectMatchCard(this)">Project Filter</div><div class="match-card" data-target="2" onclick="selectMatchCard(this)">
+            <span class="lang-en">Filters ledger by contract cost centers</span>
+            <span class="lang-cn">按合同成本中心对分类账进行过滤</span>
+        </div>
+            </div>
+            <div id="match-game-res" style="margin-top: 20px; font-weight: bold; color: green;"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleLanguage() {
+            document.body.classList.toggle('cn-active');
+        }
+
+        function checkQuiz() {
+            let score = 0;
+            
+        const q0 = document.querySelector('input[name="q0"]:checked');
+        if (q0 && parseInt(q0.value) === 0) score++;
+        
+        const q1 = document.querySelector('input[name="q1"]:checked');
+        if (q1 && parseInt(q1.value) === 1) score++;
+        
+        const q2 = document.querySelector('input[name="q2"]:checked');
+        if (q2 && parseInt(q2.value) === 1) score++;
+        
+        const q3 = document.querySelector('input[name="q3"]:checked');
+        if (q3 && parseInt(q3.value) === 0) score++;
+        
+        const q4 = document.querySelector('input[name="q4"]:checked');
+        if (q4 && parseInt(q4.value) === 1) score++;
+        
+            document.getElementById('quiz-result').innerHTML = `<span class='correct-ans'>
+                <span class="lang-en">You scored: ${score} / 5</span>
+                <span class="lang-cn">得分：${score} / 5</span>
+            </span>`;
+        }
+
+        function checkBlanks() {
+            
+        const b0 = (document.getElementById('blank0').value || document.getElementById('blank_cn0').value).toLowerCase().trim();
+        const answers0 = ['department', '部门', 'department code'];
+        if(answers0.includes(b0)) {
+            document.getElementById('blank0').style.borderBottomColor = '#2E8B57';
+            document.getElementById('blank_cn0').style.borderBottomColor = '#2E8B57';
+        } else {
+            document.getElementById('blank0').style.borderBottomColor = '#C70039';
+            document.getElementById('blank_cn0').style.borderBottomColor = '#C70039';
+        }
+        
+        const b1 = (document.getElementById('blank1').value || document.getElementById('blank_cn1').value).toLowerCase().trim();
+        const answers1 = ['where', 'where clause'];
+        if(answers1.includes(b1)) {
+            document.getElementById('blank1').style.borderBottomColor = '#2E8B57';
+            document.getElementById('blank_cn1').style.borderBottomColor = '#2E8B57';
+        } else {
+            document.getElementById('blank1').style.borderBottomColor = '#C70039';
+            document.getElementById('blank_cn1').style.borderBottomColor = '#C70039';
+        }
+        
+        }
+
+        function showCodeAns(id) {
+            const el = document.getElementById('code-ans-' + id);
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Match Game Logic
+        let firstCard = null;
+        function selectMatchCard(card) {
+            if (card.classList.contains('matched') || card.classList.contains('selected')) return;
+
+            card.classList.add('selected');
+
+            if (!firstCard) {
+                firstCard = card;
+            } else {
+                const id1 = firstCard.getAttribute('data-id') || firstCard.getAttribute('data-target');
+                const id2 = card.getAttribute('data-id') || card.getAttribute('data-target');
+                const type1 = firstCard.hasAttribute('data-id') ? 'term' : 'def';
+                const type2 = card.hasAttribute('data-id') ? 'term' : 'def';
+
+                if (id1 === id2 && type1 !== type2) {
+                    firstCard.classList.remove('selected');
+                    card.classList.remove('selected');
+                    firstCard.classList.add('matched');
+                    card.classList.add('matched');
+                    firstCard = null;
+                    
+                    checkMatchGameFinish();
+                } else {
+                    const temp = firstCard;
+                    setTimeout(() => {
+                        temp.classList.remove('selected');
+                        card.classList.remove('selected');
+                    }, 500);
+                    firstCard = null;
+                }
+            }
+        }
+
+        function checkMatchGameFinish() {
+            const matchedCards = document.querySelectorAll('.match-card.matched');
+            if (matchedCards.length === 8) {
+                document.getElementById('match-game-res').innerHTML = "Congratulations! All terms matched successfully! 🎉";
+            }
+        }
+    </script>
+</body>
+</html>

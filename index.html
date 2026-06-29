@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASE20095: Computerised Accounting Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Macaron Palette */
+            --pastel-pink: #FFD1DC;
+            --pastel-mint: #B0EACD;
+            --pastel-blue: #AEC6CF;
+            --pastel-lavender: #C3B1E1;
+            --pastel-yellow: #FDFD96;
+            
+            --ink: #111111;
+            --ink-muted: #333333;
+            
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            --radius-lg: 32px;
+            --radius-md: 16px;
+            
+            --spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-lavender), var(--pastel-blue), var(--pastel-mint));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Auras */
+        body::before {
+            content: ''; position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--pastel-yellow) 0%, transparent 70%);
+            filter: blur(80px); opacity: 0.6; z-index: -1;
+            animation: floatAura 20s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: ''; position: fixed; bottom: -10%; right: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, var(--pastel-pink) 0%, transparent 70%);
+            filter: blur(100px); opacity: 0.5; z-index: -1;
+            animation: floatAura 25s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatAura {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 100px) scale(1.2); }
+        }
+
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; color: var(--ink); }
+        
+        .hero { text-align: center; padding: 40px 20px 20px; position: relative; }
+        .hero h1 { font-size: 2.5rem; margin-top: 20px; font-weight: 800; color: var(--ink); }
+        .hero p { font-size: 1.35rem; font-weight: 600; color: var(--ink); max-width: 600px; margin: 0 auto; background: var(--glass-bg); padding: 10px 20px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid var(--glass-border); }
+        .hero-img-container { margin-top: 30px; }
+        .hero-img-container img { max-width: 250px; border-radius: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 4px solid rgba(255,255,255,0.7); animation: float 6s ease-in-out infinite; }
+        
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+        
+        .lang-btn {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            z-index: 10;
+        }
+
+        .grid-container { max-width: 1200px; margin: 40px auto 60px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; position: relative; z-index: 1; }
+        
+        .card { 
+            background: var(--glass-bg); 
+            border-radius: var(--radius-lg); 
+            padding: 35px; 
+            box-shadow: var(--glass-shadow); 
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            transition: all 0.5s var(--spring);
+            text-decoration: none;
+            color: var(--ink);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .grid-container .card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 15px 40px 0 rgba(31, 38, 135, 0.15); background: rgba(255, 255, 255, 0.6); }
+        .card h2 { border-bottom: 2px solid rgba(255,255,255,0.5); padding-bottom: 15px; margin-top: 0; font-size: 1.8rem;}
+        .grid-container .card p { color: var(--ink-muted); margin-bottom: 0; font-size: 1.1rem; line-height: 1.6; font-weight: 600; }
+        
+        .badge { background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-lavender)); color: var(--ink); padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; align-self: flex-start; margin-bottom: 20px; font-family: 'Rajdhani', sans-serif; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        
+        .btn { 
+            background: linear-gradient(135deg, var(--pastel-lavender), var(--pastel-pink));
+            color: var(--ink); 
+            padding: 12px 28px; 
+            border: 2px solid rgba(255,255,255,0.8); 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            transition: all 0.4s var(--spring);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .btn:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(195, 177, 225, 0.4); background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-lavender)); }
+
+        /* Translation CSS Rules */
+        .lang-cn { display: none !important; }
+        body.cn-active .lang-en { display: none !important; }
+        body.cn-active .lang-cn { display: block !important; }
+        
+        span.lang-cn { display: none !important; }
+        body.cn-active span.lang-en { display: none !important; }
+        body.cn-active span.lang-cn { display: inline !important; }
+
+        @media (max-width: 768px) {
+            .lang-btn {
+                position: static;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <h1>
+            <span class="lang-en">ASE20095: Computerised Accounting Skills</span>
+            <span class="lang-cn">ASE20095: 计算机化会计实操技能</span>
+        </h1>
+        <p>
+            <span class="lang-en">Interactive Study Portal & AI Playbook</span>
+            <span class="lang-cn">互动式学习门户与 AI 实操指南</span>
+        </p>
+        <button class="btn lang-btn" onclick="toggleLanguage()">🌐 EN / 中文</button>
+        <div class="hero-img-container">
+            <img src="assets/macaron_accounting.png" alt="Macaron Accounting Concept">
+        </div>
+        <div style="margin-top:20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <a href="Accounting-Note.html" class="btn" style="text-decoration:none;">
+                <span class="lang-en">Go to Comprehensive Review SPA</span>
+                <span class="lang-cn">进入综合复习笔记本 SPA</span>
+            </a>
+            <a href="assets/practical_exercises.xlsx" class="btn" style="text-decoration:none; background: linear-gradient(135deg, var(--pastel-mint), var(--pastel-blue));" download>
+                <span class="lang-en">📥 Download Exercise Excel</span>
+                <span class="lang-cn">📥 下载实操练习 Excel</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <!-- Week 1 -->
+        <a href="week1.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 1</span>
+                <span class="lang-cn">第 1 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 1: AIS Intro & System Setup</span>
+                <span class="lang-cn">主题 1：AIS 概述与系统初始化</span>
+            </h2>
+            <p>
+                <span class="lang-en">Overview of AIS, desktop packages in Malaysia, database setup.</span>
+                <span class="lang-cn">会计信息系统概述、马来西亚桌面会计包，以及数据库的初始化配置。</span>
+            </p>
+        </a>
+        
+        <!-- Week 2 -->
+        <a href="week2.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 2</span>
+                <span class="lang-cn">第 2 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 2: COA Maintenance & Restore</span>
+                <span class="lang-cn">主题 2：科目表维护与备份恢复</span>
+            </h2>
+            <p>
+                <span class="lang-en">File restoration, database loading, and Chart of Accounts structure.</span>
+                <span class="lang-cn">数据恢复与导入，以及按大类规范设计的会计科目表科目结构。</span>
+            </p>
+        </a>
+
+        <!-- Week 3 -->
+        <a href="week3.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 3</span>
+                <span class="lang-cn">第 3 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 3: Ledgers Recording & Malaysia SST</span>
+                <span class="lang-cn">主题 3：分类账记录与马来西亚 SST</span>
+            </h2>
+            <p>
+                <span class="lang-en">Recording transactions, Malaysia SST tax rates (6% / 8% / 5% / 10%), tax coding (SR/TX/OS).</span>
+                <span class="lang-cn">录入销售/采购账簿，马来西亚 SST 税率及常用税码（SR/TX/OS）的应用。</span>
+            </p>
+        </a>
+
+        <!-- Week 4 -->
+        <a href="week4.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 4</span>
+                <span class="lang-cn">第 4 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 4: General Journal & Payroll</span>
+                <span class="lang-cn">主题 4：普通日记账与工资结算</span>
+            </h2>
+            <p>
+                <span class="lang-en">General journal adjustments, salary accruals, EPF (11%/13%), and PCB taxes.</span>
+                <span class="lang-cn">普通日记账调整，工资单计提，以及 EPF 退休金和 PCB 预扣所得税的处理。</span>
+            </p>
+        </a>
+
+        <!-- Week 5 -->
+        <a href="week5.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 5</span>
+                <span class="lang-cn">第 5 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 5: Correction of Bookkeeping Errors</span>
+                <span class="lang-cn">主题 5：更正记账错误与审计日志</span>
+            </h2>
+            <p>
+                <span class="lang-en">Identifying error categories, posting reversals, correction journals, and audit trails.</span>
+                <span class="lang-cn">识别错误类别，编写反向红字冲销，更正分类账记录，以及审计跟踪日志核查。</span>
+            </p>
+        </a>
+
+        <!-- Week 6 -->
+        <a href="week6.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 6</span>
+                <span class="lang-cn">第 6 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 6: Procurement Documents & Stock Sync</span>
+                <span class="lang-cn">主题 6：采购单据与库存同步</span>
+            </h2>
+            <p>
+                <span class="lang-en">Generating POs, GRNs, Purchase Invoices, and real-time inventory count sync.</span>
+                <span class="lang-cn">开具采购订单、收货单、供应商发票，以及系统库存数量的自动同步。</span>
+            </p>
+        </a>
+
+        <!-- Week 7 -->
+        <a href="week7.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 7</span>
+                <span class="lang-cn">第 7 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 7: Debtor & Creditor Aging</span>
+                <span class="lang-cn">主题 7：应收应付账龄分析</span>
+            </h2>
+            <p>
+                <span class="lang-en">Producing Aging reports, credit terms, and credit limits threshold controls.</span>
+                <span class="lang-cn">运行账龄分析报告，设置信贷账期与信用额度拦截警示。</span>
+            </p>
+        </a>
+
+        <!-- Week 8 -->
+        <a href="week8.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 8</span>
+                <span class="lang-cn">第 8 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 8: Custom Reports & Criteria Filters</span>
+                <span class="lang-cn">主题 8：自定义报表与查询过滤</span>
+            </h2>
+            <p>
+                <span class="lang-en">Filtering ledgers by Date, Department, and Project codes database queries.</span>
+                <span class="lang-cn">利用日期范围、部门和项目代码过滤账目并生成分类账。</span>
+            </p>
+        </a>
+
+        <!-- Week 9 -->
+        <a href="week9.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 9</span>
+                <span class="lang-cn">第 9 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 9: Cloud Accounting Systems</span>
+                <span class="lang-cn">主题 9：云端会计系统部署</span>
+            </h2>
+            <p>
+                <span class="lang-en">Cloud architecture, multi-user accessibility, role security, SSL encryption, and API keys.</span>
+                <span class="lang-cn">云端系统架构，多用户协同访问控制，角色安全机制，SSL 数据加密保护。</span>
+            </p>
+        </a>
+
+        <!-- Week 10 -->
+        <a href="week10.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 10</span>
+                <span class="lang-cn">第 10 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 10: AI Automation & OCR Ingestion</span>
+                <span class="lang-cn">主题 10：AI 自动化与单据采集</span>
+            </h2>
+            <p>
+                <span class="lang-en">OCR invoice text extraction, automated drafts creation, and automated bank rules matching.</span>
+                <span class="lang-cn">OCR 发票文本采集识别，智能草稿生成，以及银行流水自动对账规则。</span>
+            </p>
+        </a>
+
+        <!-- Week 11 -->
+        <a href="week11.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 11</span>
+                <span class="lang-cn">第 11 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 11: Digital Workflows Integration</span>
+                <span class="lang-cn">主题 11：数字业务集成对接</span>
+            </h2>
+            <p>
+                <span class="lang-en">Shopify store synchronizations, payment gateway Stripe fees postings, and real-time inventory adjustments.</span>
+                <span class="lang-cn">电子商务商城对接，支付网关 Stripe 手续费的分录映射过账。</span>
+            </p>
+        </a>
+
+        <!-- Week 12 -->
+        <a href="week12.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 12</span>
+                <span class="lang-cn">第 12 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 12: AI Analytics & Cash Forecasting</span>
+                <span class="lang-cn">主题 12：AI 辅助财务看板与预测</span>
+            </h2>
+            <p>
+                <span class="lang-en">Financial KPIs, liquidity ratios (Current / Quick Ratio), and cash flow predictions.</span>
+                <span class="lang-cn">财务核心 KPI、偿债流动性比率分析（流动/速动比率）以及现金流预测。</span>
+            </p>
+        </a>
+
+        <!-- Week 13 -->
+        <a href="week13.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 13</span>
+                <span class="lang-cn">第 13 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 13: Data Governance & Security</span>
+                <span class="lang-cn">主题 13：数据治理与系统安全</span>
+            </h2>
+            <p>
+                <span class="lang-en">Regulatory compliance (GDPR), audit logs reviews, and database integrity locks.</span>
+                <span class="lang-cn">合规治理审计，系统变更历史日志核查，以及分类账防篡改锁定。</span>
+            </p>
+        </a>
+
+        <!-- Week 14 -->
+        <a href="week14.html" class="card">
+            <span class="badge">
+                <span class="lang-en">Week 14</span>
+                <span class="lang-cn">第 14 周</span>
+            </span>
+            <h2>
+                <span class="lang-en">Topic 14: Year-End Closing Procedures</span>
+                <span class="lang-cn">主题 14：年终结账与结转操作</span>
+            </h2>
+            <p>
+                <span class="lang-en">Resetting temporary accounts to zero, transferring net profits to Retained Earnings, closing ledgers in SQL & Million.</span>
+                <span class="lang-cn">重置临时损益账户为零，净利润结转至留存收益，SQL 和 Million 年结操作。</span>
+            </p>
+        </a>
+    </div>
+
+    <script>
+        function toggleLanguage() {
+            document.body.classList.toggle('cn-active');
+        }
+    </script>
+</body>
+</html>
