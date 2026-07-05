@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 6: Procurement Documents & Stocks Updates - ASE20095</title>
+    <title>Week 6: SQL Accounting Journals & Errors Correction - ASE20095</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -170,9 +170,16 @@
             <span class="lang-cn">← 返回主页</span>
         </a>
         <h1>
-            <span class="lang-en">Week 6: Procurement Documents & Stocks Updates</span>
-            <span class="lang-cn">第 6 周：采购单据生成与库存同步更新</span>
+            <span class="lang-en">Week 6: SQL Accounting Journals & Errors Correction</span>
+            <span class="lang-cn">第 6 周：SQL Accounting 日记账与错误更正</span>
         </h1>
+        <div style="margin-top: 15px; text-align: center;">
+            <a href="assets/SQL_Practical_Data.zip" download class="btn" style="background: linear-gradient(135deg, var(--pastel-mint), var(--pastel-blue)); text-decoration:none; display: inline-block;">
+                <span class="lang-en">💻 Practical Exercise Online</span>
+                <span class="lang-cn">💻 在线实操练习</span>
+            </a>
+        </div>
+            
         <button class="btn lang-btn" onclick="toggleLanguage()">🌐 EN / 中文</button>
     </div>
 
@@ -345,25 +352,7 @@
             </div>
         </div>
 
-        <!-- Fill in the Blanks -->
-        <div class="card">
-            <h2>
-                <span class="lang-en">Fill in the Blanks</span>
-                <span class="lang-cn">填空练习</span>
-            </h2>
-            <p>
-            <span class="lang-en">The abbreviation for the document confirming warehouse stock arrival is <input type='text' id='blank0' class='blank-input' style='width:100px;'>.</span>
-            <span class="lang-cn">确认仓库货物到货的单据缩写是 <input type='text' id='blank_cn0' class='blank-input' style='width:100px;'>。</span>
-        </p><p>
-            <span class="lang-en">When stock is sold, the inventory value in the ledger is <input type='text' id='blank1' class='blank-input' style='width:100px;'>.</span>
-            <span class="lang-cn">当库存售出时，分类账中的存货价值会被 <input type='text' id='blank_cn1' class='blank-input' style='width:100px;'>（借记/贷记）。</span>
-        </p>
-            <button class="btn" onclick="checkBlanks()">
-                <span class="lang-en">Check Answers</span>
-                <span class="lang-cn">检查答案</span>
-            </button>
-            <div id="blanks-result"></div>
-        </div>
+        
 
         <!-- Coding Activities -->
         <div class="card">

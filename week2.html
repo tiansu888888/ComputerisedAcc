@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 2: Chart of Accounts Maintenance & Restoration - ASE20095</title>
+    <title>Week 2: SQL Accounting COA & Opening Balances - ASE20095</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -170,9 +170,16 @@
             <span class="lang-cn">← 返回主页</span>
         </a>
         <h1>
-            <span class="lang-en">Week 2: Chart of Accounts Maintenance & Restoration</span>
-            <span class="lang-cn">第 2 周：会计科目表维护与数据备份恢复</span>
+            <span class="lang-en">Week 2: SQL Accounting COA & Opening Balances</span>
+            <span class="lang-cn">第 2 周：SQL Accounting 科目表与期初余额</span>
         </h1>
+        <div style="margin-top: 15px; text-align: center;">
+            <a href="assets/SQL_Practical_Data.zip" download class="btn" style="background: linear-gradient(135deg, var(--pastel-mint), var(--pastel-blue)); text-decoration:none; display: inline-block;">
+                <span class="lang-en">💻 Practical Exercise Online</span>
+                <span class="lang-cn">💻 在线实操练习</span>
+            </a>
+        </div>
+            
         <button class="btn lang-btn" onclick="toggleLanguage()">🌐 EN / 中文</button>
     </div>
 
@@ -345,25 +352,7 @@
             </div>
         </div>
 
-        <!-- Fill in the Blanks -->
-        <div class="card">
-            <h2>
-                <span class="lang-en">Fill in the Blanks</span>
-                <span class="lang-cn">填空练习</span>
-            </h2>
-            <p>
-            <span class="lang-en">In COA codes, 3000-3999 ranges represent the <input type='text' id='blank0' class='blank-input' style='width:100px;'> group accounts.</span>
-            <span class="lang-cn">在会计科目表代码中，3000-3999 范围代表 <input type='text' id='blank_cn0' class='blank-input' style='width:100px;'> 账户大类。</span>
-        </p><p>
-            <span class="lang-en">Restoring databases in SQL Accounting loads backup files with the extension <input type='text' id='blank1' class='blank-input' style='width:100px;'>.</span>
-            <span class="lang-cn">在 SQL Accounting 中，恢复数据库加载的备份文件扩展名为 <input type='text' id='blank_cn1' class='blank-input' style='width:100px;'>。</span>
-        </p>
-            <button class="btn" onclick="checkBlanks()">
-                <span class="lang-en">Check Answers</span>
-                <span class="lang-cn">检查答案</span>
-            </button>
-            <div id="blanks-result"></div>
-        </div>
+        
 
         <!-- Coding Activities -->
         <div class="card">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 8: Custom Reports Querying & Criteria Filters - ASE20095</title>
+    <title>Week 8: Cloud Million Debtor & Creditor Aging - ASE20095</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -170,9 +170,16 @@
             <span class="lang-cn">← 返回主页</span>
         </a>
         <h1>
-            <span class="lang-en">Week 8: Custom Reports Querying & Criteria Filters</span>
-            <span class="lang-cn">第 8 周：自定义财务报表查询与多参数过滤</span>
+            <span class="lang-en">Week 8: Cloud Million Debtor & Creditor Aging</span>
+            <span class="lang-cn">第 8 周：Cloud Million 应收与应付账龄管理</span>
         </h1>
+        <div style="margin-top: 15px; text-align: center;">
+            <a href="https://millionsystem.com.my/user-guide/" target="_blank" class="btn" style="background: linear-gradient(135deg, var(--pastel-mint), var(--pastel-blue)); text-decoration:none; display: inline-block;">
+                <span class="lang-en">💻 Practical Exercise Online</span>
+                <span class="lang-cn">💻 在线实操练习</span>
+            </a>
+        </div>
+            
         <button class="btn lang-btn" onclick="toggleLanguage()">🌐 EN / 中文</button>
     </div>
 
@@ -345,25 +352,7 @@
             </div>
         </div>
 
-        <!-- Fill in the Blanks -->
-        <div class="card">
-            <h2>
-                <span class="lang-en">Fill in the Blanks</span>
-                <span class="lang-cn">填空练习</span>
-            </h2>
-            <p>
-            <span class="lang-en">To analyze performance of a branch, we filter the General Ledger by <input type='text' id='blank0' class='blank-input' style='width:100px;'> code.</span>
-            <span class="lang-cn">为了分析分部的业绩，我们按 <input type='text' id='blank_cn0' class='blank-input' style='width:100px;'> 代码来过滤总账记录。</span>
-        </p><p>
-            <span class="lang-en">Database tables filters generate underlying SQL queries using the keyword <input type='text' id='blank1' class='blank-input' style='width:100px;'>.</span>
-            <span class="lang-cn">数据库表过滤器在底层生成 SQL 查询时会使用关键字 <input type='text' id='blank_cn1' class='blank-input' style='width:100px;'> 来限制条件。</span>
-        </p>
-            <button class="btn" onclick="checkBlanks()">
-                <span class="lang-en">Check Answers</span>
-                <span class="lang-cn">检查答案</span>
-            </button>
-            <div id="blanks-result"></div>
-        </div>
+        
 
         <!-- Coding Activities -->
         <div class="card">
