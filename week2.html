@@ -191,10 +191,10 @@
                 <span class="lang-cn">分步指南</span>
             </h2>
             <div class="lang-en">
-                <div class='step'><h3>1. Data Restoration</h3><p>Restoring database backups is critical for audit recovery. In SQL Accounting, use **File -> Restore** to load `.FDB` files. In Million, restore from compressed ZIP folders using the database manager utility.</p></div><div class='step'><h3>2. Chart of Accounts (COA) Structure</h3><p>Chart of Accounts organizes ledgers by categories: Assets (1000-1999), Liabilities (2000-2999), Equity (3000-3999), Sales Revenue (4000-4999), Cost of Goods Sold (5000-5999), and Expenses (6000-6999).</p></div>
+                <div class='step'><h3>1. Data Restoration</h3><p>Restoring database backups is critical for audit recovery. In SQL Accounting, use **File -> Restore** to load `.FDB` files. In Million, restore from compressed ZIP folders using the database manager utility.</p></div><div class='step'><h3>2. Chart of Accounts (COA) Structure</h3><p>Chart of Accounts organizes ledgers by categories: Assets (2000-2999), Liabilities (4000-4999), Equity (1000-1999), Sales Revenue (5000-5999), Cost of Goods Sold (6000-6999), and Expenses (9000-9999).</p></div>
             </div>
             <div class="lang-cn">
-                <div class='step'><h3>1. 数据恢复与导入</h3><p>恢复数据库备份对审计恢复至关重要。在 SQL Accounting 中，使用 **File -> Restore** 载入 `.FDB` 文件。在 Million 中，使用数据库管理程序从压缩的 ZIP 文件夹中恢复数据。</p></div><div class='step'><h3>2. 会计科目表 (COA) 结构</h3><p>会计科目表按大类组织分类账：资产 (1000-1999)、负债 (2000-2999)、权益 (3000-3999)、销售收入 (4000-4999)、销货成本 (5000-5999) 和费用 (6000-6999)。</p></div>
+                <div class='step'><h3>1. 数据恢复与导入</h3><p>恢复数据库备份对审计恢复至关重要。在 SQL Accounting 中，使用 **File -> Restore** 载入 `.FDB` 文件。在 Million 中，使用数据库管理程序从压缩的 ZIP 文件夹中恢复数据。</p></div><div class='step'><h3>2. 会计科目表 (COA) 结构</h3><p>会计科目表按大类组织分类账：资产 (2000-2999)、负债 (4000-4999)、权益 (1000-1999)、销售收入 (5000-5999)、销货成本 (6000-6999) 和费用 (9000-9999)。</p></div>
             </div>
         </div>
 
@@ -205,7 +205,7 @@
                 <span class="lang-cn">概念可视化</span>
             </h2>
             <div style="background: rgba(255,255,255,0.5); border-radius: 8px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.8);">
-                <svg width='100%' max-width='600' height='180' viewBox='0 0 600 180'><rect x='20' y='30' width='160' height='120' rx='10' fill='rgba(255, 209, 220, 0.6)' stroke='#111' stroke-width='2'/><text x='100' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Assets (1xxx)</text><text x='100' y='95' text-anchor='middle' font-size='13'>Cash &amp; Receivables</text><rect x='220' y='30' width='160' height='120' rx='10' fill='rgba(195, 177, 225, 0.6)' stroke='#111' stroke-width='2'/><text x='300' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Liabilities (2xxx)</text><text x='300' y='95' text-anchor='middle' font-size='13'>Payables &amp; Loans</text><rect x='420' y='30' width='160' height='120' rx='10' fill='rgba(174, 198, 207, 0.6)' stroke='#111' stroke-width='2'/><text x='500' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Expenses (6xxx)</text><text x='500' y='95' text-anchor='middle' font-size='13'>Rent &amp; Salaries</text></svg>
+                <svg width='100%' max-width='600' height='180' viewBox='0 0 600 180'><rect x='20' y='30' width='160' height='120' rx='10' fill='rgba(255, 209, 220, 0.6)' stroke='#111' stroke-width='2'/><text x='100' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Assets (2xxx)</text><text x='100' y='95' text-anchor='middle' font-size='13'>Cash &amp; Receivables</text><rect x='220' y='30' width='160' height='120' rx='10' fill='rgba(195, 177, 225, 0.6)' stroke='#111' stroke-width='2'/><text x='300' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Liabilities (4xxx)</text><text x='300' y='95' text-anchor='middle' font-size='13'>Payables &amp; Loans</text><rect x='420' y='30' width='160' height='120' rx='10' fill='rgba(174, 198, 207, 0.6)' stroke='#111' stroke-width='2'/><text x='500' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Expenses (9xxx)</text><text x='500' y='95' text-anchor='middle' font-size='13'>Rent &amp; Salaries</text></svg>
             </div>
         </div>
 
@@ -221,7 +221,7 @@
             <span class="lang-cn">解释该模块核心主题的视觉概念图：</span>
         </p>
         <div style="background: rgba(255,255,255,0.5); border-radius: 8px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.8); margin-top: 15px;">
-            <svg width='100%' max-width='600' height='180' viewBox='0 0 600 180'><rect x='20' y='30' width='160' height='120' rx='10' fill='rgba(255, 209, 220, 0.6)' stroke='#111' stroke-width='2'/><text x='100' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Assets (1xxx)</text><text x='100' y='95' text-anchor='middle' font-size='13'>Cash &amp; Receivables</text><rect x='220' y='30' width='160' height='120' rx='10' fill='rgba(195, 177, 225, 0.6)' stroke='#111' stroke-width='2'/><text x='300' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Liabilities (2xxx)</text><text x='300' y='95' text-anchor='middle' font-size='13'>Payables &amp; Loans</text><rect x='420' y='30' width='160' height='120' rx='10' fill='rgba(174, 198, 207, 0.6)' stroke='#111' stroke-width='2'/><text x='500' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Expenses (6xxx)</text><text x='500' y='95' text-anchor='middle' font-size='13'>Rent &amp; Salaries</text></svg>
+            <svg width='100%' max-width='600' height='180' viewBox='0 0 600 180'><rect x='20' y='30' width='160' height='120' rx='10' fill='rgba(255, 209, 220, 0.6)' stroke='#111' stroke-width='2'/><text x='100' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Assets (2xxx)</text><text x='100' y='95' text-anchor='middle' font-size='13'>Cash &amp; Receivables</text><rect x='220' y='30' width='160' height='120' rx='10' fill='rgba(195, 177, 225, 0.6)' stroke='#111' stroke-width='2'/><text x='300' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Liabilities (4xxx)</text><text x='300' y='95' text-anchor='middle' font-size='13'>Payables &amp; Loans</text><rect x='420' y='30' width='160' height='120' rx='10' fill='rgba(174, 198, 207, 0.6)' stroke='#111' stroke-width='2'/><text x='500' y='65' text-anchor='middle' font-weight='bold' font-size='16'>Expenses (9xxx)</text><text x='500' y='95' text-anchor='middle' font-size='13'>Rent &amp; Salaries</text></svg>
         </div>
     </div>
     
@@ -268,8 +268,8 @@
                 <span class="lang-cn">3000 - 3999</span>
             </label><label class='quiz-label'>
                 <input type='radio' name='q0' value='2'>
-                <span class="lang-en">6000 - 6999</span>
-                <span class="lang-cn">6000 - 6999</span>
+                <span class="lang-en">9000 - 9999</span>
+                <span class="lang-cn">9000 - 9999</span>
             </label>
         </div><div class='quiz-q'>
             <p><b>2. 
@@ -362,8 +362,8 @@
             </h2>
             <div class='step'>
             <p><b>
-                <span class="lang-en">Task 1: Write a SQL query to select all accounts where Code starts with '6'.</span>
-                <span class="lang-cn">任务 1: 编写一个 SQL 查询，选择科目代码以 '6' 开头的所有账户。</span>
+                <span class="lang-en">Task 1: Write a SQL query to select all accounts where Code starts with '9'.</span>
+                <span class="lang-cn">任务 1: 编写一个 SQL 查询，选择科目代码以 '9' 开头的所有账户。</span>
             </b></p>
             <button class="btn" onclick="showCodeAns('w2c0')">
                 <span class="lang-en">Show Answer</span>
